@@ -306,6 +306,18 @@ a { color: inherit; text-decoration: none; }
 }
 .card:hover .photo { transform: scale(1.06); }
 
+/* Вырезка на прозрачном фоне: товар целиком, с «поп»-тенью */
+.photo--cutout {
+  height: 128px;           /* блок фото 150 px — оставляем воздух сверху и снизу */
+  width: auto;
+  max-width: 90%;
+  object-fit: contain;
+  filter: drop-shadow(4px 4px 0 rgba(17, 17, 17, .18));
+}
+.card:hover .photo--cutout { transform: rotate(-6deg) scale(1.08); }
+.preview .photo--cutout       { height: 100px; }
+.reminder__dot .photo--cutout { height: 36px; filter: none; }
+
 .photo-field { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
 .photo-field__hint { font-size: 12px; }
 .btn--small { padding: 8px 14px; font-size: 14px; box-shadow: 3px 3px 0 0 var(--ink); }

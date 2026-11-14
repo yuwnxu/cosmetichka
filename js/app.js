@@ -4,7 +4,7 @@
 
 /* ---------- Состояние ---------- */
 const state = {
-  items: storage.get("items", null) || createDemoItems(),
+  items: storage.get("items_v2", null) || createDemoItems(),
   settings: storage.get("settings", { threshold: 30, name: "Юлдуз" }),
   routine: storage.get("routine", { date: "", done: [] }),
   filter: { category: "Все", status: null, query: "" },
@@ -31,7 +31,7 @@ function createDemoItems() {
 
 /* Возвращает false, если браузер не смог сохранить (например, кончилось место) */
 function save() {
-  const ok = storage.set("items", state.items);
+  const ok = storage.set("items_v2", state.items);
   storage.set("settings", state.settings);
   storage.set("routine", state.routine);
   return ok;
@@ -73,11 +73,15 @@ function bottleHTML(color) {
     </div>`;
 }
 
-/* Фото, если оно есть, иначе нарисованный флакон */
+/*
+  Фото, если оно есть, иначе нарисованный флакон.
+  Демо-фото — вырезки на прозрачном фоне (лежат в assets/photos),
+  их показываем целиком; загруженные пользователем фото заполняют блок.
+*/
 function visualHTML(item) {
-  return item.photo
-    ? `<img class="photo" src="${escapeHTML(item.photo)}" alt="${escapeHTML(item.name)}" loading="lazy">`
-    : bottleHTML(item.color);
+  if (!item.photo) return bottleHTML(item.color);
+  const isCutout = item.photo.startsWith("assets/");
+  return `<img class="photo ${isCutout ? "photo--cutout" : ""}" src="${escapeHTML(item.photo)}" alt="${escapeHTML(item.name)}" loading="lazy">`;
 }
 
 function cardHTML(item, index) {
