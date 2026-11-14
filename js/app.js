@@ -1,16 +1,11 @@
-/* =========================================================
-   app.js — логика приложения «Косметичка»
-   ========================================================= */
-
-/* ---------- Состояние ---------- */
 const state = {
   items: storage.get("items_v2", null) || createDemoItems(),
   settings: storage.get("settings_v2", { threshold: 30, name: "User" }),
   routine: storage.get("routine", { date: "", done: [] }),
   filter: { category: "Все", status: null, query: "" },
-  editingId: null,     // id средства в модальном окне (null — новое)
-  formColor: 0,        // выбранный цвет в форме
-  formPhoto: null,     // фото в форме (data URL или путь к файлу)
+  editingId: null,
+  formColor: 0,
+  formPhoto: null,
 };
 
 function createDemoItems() {
@@ -29,7 +24,6 @@ function createDemoItems() {
   });
 }
 
-/* Возвращает false, если браузер не смог сохранить (например, кончилось место) */
 function save() {
   const ok = storage.set("items_v2", state.items);
   storage.set("settings_v2", state.settings);
@@ -37,7 +31,6 @@ function save() {
   return ok;
 }
 
-/* ---------- Короткие ссылки на элементы ---------- */
 const $ = (sel) => document.querySelector(sel);
 const els = {
   grid: $("#grid"),
@@ -58,12 +51,10 @@ const els = {
   toast: $("#toast"),
 };
 
-/* Средства с уже посчитанным сроком */
 function withExpiry() {
   return state.items.map((item) => ({ ...item, ...getExpiry(item, state.settings.threshold) }));
 }
 
-/* ---------- HTML-шаблоны ---------- */
 function bottleHTML(color) {
   const c = PALETTE[color] || PALETTE[0];
   return `
@@ -73,11 +64,7 @@ function bottleHTML(color) {
     </div>`;
 }
 
-/*
-  Фото, если оно есть, иначе нарисованный флакон.
-  Демо-фото — вырезки на прозрачном фоне (лежат в assets/photos),
-  их показываем целиком; загруженные пользователем фото заполняют блок.
-*/
+// Демо-фото из assets/photos — вырезки на прозрачном фоне, их показываем целиком
 function visualHTML(item) {
   if (!item.photo) return bottleHTML(item.color);
   const isCutout = item.photo.startsWith("assets/");
@@ -106,7 +93,6 @@ function cardHTML(item, index) {
     </button>`;
 }
 
-/* ---------- Страница «Косметичка» ---------- */
 function renderCategories() {
   const all = ["Все", ...CATEGORIES];
   els.categories.innerHTML = all
@@ -117,7 +103,6 @@ function renderCategories() {
 function renderCosmetics() {
   const list = withExpiry();
 
-  // Сводка считается по всем средствам, без фильтров
   const counts = { ok: 0, soon: 0, expired: 0 };
   list.forEach((item) => counts[item.status]++);
   els.countOk.textContent = counts.ok;
@@ -137,24 +122,22 @@ function renderCosmetics() {
     card.classList.toggle("is-active", card.dataset.status === state.filter.status);
   });
 
-  // Фильтрация: категория + статус + поиск
   const { category, status, query } = state.filter;
   const q = query.trim().toLowerCase();
   const visible = list
     .filter((item) => category === "Все" || item.category === category)
     .filter((item) => !status || item.status === status)
     .filter((item) => !q || `${item.name} ${item.brand}`.toLowerCase().includes(q))
-    .sort((a, b) => a.daysLeft - b.daysLeft); // сначала то, что истекает раньше
+    .sort((a, b) => a.daysLeft - b.daysLeft);
 
   els.grid.innerHTML = visible.map(cardHTML).join("");
   els.empty.hidden = visible.length > 0;
 }
 
-/* ---------- Страница «Рутина» ---------- */
 function renderRoutine() {
   const todayISO = toISO(today());
   if (state.routine.date !== todayISO) {
-    state.routine = { date: todayISO, done: [] }; // новый день — чек-лист с нуля
+    state.routine = { date: todayISO, done: [] };
     save();
   }
   $("#routineDate").textContent = formatDate(today());
@@ -174,7 +157,6 @@ function renderRoutine() {
   renderList("evening", $("#routineEvening"));
 }
 
-/* ---------- Страница «Напоминания» ---------- */
 function renderReminders() {
   $("#threshold").value = String(state.settings.threshold);
   const list = withExpiry()
@@ -197,7 +179,6 @@ function renderReminders() {
   $("#remindersEmpty").hidden = list.length > 0;
 }
 
-/* ---------- Страница «Профиль» ---------- */
 function renderProfile() {
   const name = state.settings.name || "Гость";
   const initial = name.trim().charAt(0).toUpperCase() || "?";
@@ -213,7 +194,6 @@ function renderProfile() {
     <span class="status status--expired">${list.filter((i) => i.status === "expired").length} просрочено</span>`;
 }
 
-/* ---------- Роутинг по #hash ---------- */
 const ROUTES = {
   cosmetics: renderCosmetics,
   routine: renderRoutine,
@@ -237,7 +217,7 @@ function render() {
     if (active) link.setAttribute("aria-current", "page");
     else link.removeAttribute("aria-current");
   });
-  renderCosmetics(); // обновляет бейдж в меню на любой странице
+  renderCosmetics();
   if (route !== "cosmetics") ROUTES[route]();
   renderProfileInitial();
 }
@@ -247,7 +227,6 @@ function renderProfileInitial() {
   $("#avatar").textContent = name.trim().charAt(0).toUpperCase() || "?";
 }
 
-/* ---------- Модальное окно ---------- */
 function renderSwatches() {
   els.swatches.innerHTML = PALETTE.map((c, i) =>
     `<button type="button" class="swatch ${i === state.formColor ? "is-active" : ""}" data-color="${i}" style="background:${c.body}" aria-label="Цвет ${i + 1}"></button>`
@@ -258,11 +237,7 @@ function renderSwatches() {
   $("#photoBtnText").textContent = state.formPhoto ? "Заменить фото" : "Добавить фото";
 }
 
-/*
-  Уменьшаем фото перед сохранением: localStorage вмещает всего ~5 МБ,
-  а фото с телефона весит несколько мегабайт. Через <canvas>
-  сжимаем до 640 px по большей стороне и сохраняем в JPEG.
-*/
+// localStorage вмещает около 5 МБ, поэтому фото сжимается до 640 px в JPEG
 function resizeImage(file, maxSize = 640) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -347,7 +322,6 @@ function deleteItem() {
   showToast("Средство удалено");
 }
 
-/* ---------- Уведомление внизу экрана ---------- */
 let toastTimer;
 function showToast(text) {
   els.toast.textContent = text;
@@ -356,7 +330,6 @@ function showToast(text) {
   toastTimer = setTimeout(() => els.toast.classList.remove("is-visible"), 2200);
 }
 
-/* ---------- Обработчики событий ---------- */
 function bindEvents() {
   window.addEventListener("hashchange", render);
 
@@ -376,7 +349,7 @@ function bindEvents() {
   document.querySelectorAll(".summary__card").forEach((card) => {
     card.addEventListener("click", () => {
       const s = card.dataset.status;
-      state.filter.status = state.filter.status === s ? null : s; // повторный клик снимает фильтр
+      state.filter.status = state.filter.status === s ? null : s;
       renderCosmetics();
     });
   });
@@ -391,7 +364,6 @@ function bindEvents() {
   els.deleteBtn.addEventListener("click", deleteItem);
   els.form.addEventListener("submit", submitForm);
 
-  // клик по затемнённому фону закрывает окно
   els.modal.addEventListener("click", (e) => {
     if (e.target === els.modal) closeModal();
   });
@@ -454,7 +426,6 @@ function bindEvents() {
   });
 }
 
-/* ---------- Запуск ---------- */
 function init() {
   $("#categorySelect").innerHTML = CATEGORIES.map((c) => `<option>${c}</option>`).join("");
   renderCategories();

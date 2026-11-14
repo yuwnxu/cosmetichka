@@ -1,18 +1,13 @@
-/* =========================================================
-   Косметичка — стиль «Поп» (Figma: Вариант 5 · Поп)
-   ========================================================= */
-
-/* ---------- Токены дизайна ---------- */
 :root {
-  --ink: #111111;          /* обводки, основной текст */
-  --muted: #444444;        /* второстепенный текст */
+  --ink: #111111;
+  --muted: #444444;
   --bg: #ffffff;
-  --pink: #ff5ca8;         /* акцент, активные элементы */
+  --pink: #ff5ca8;
   --pink-light: #ffb3d9;
-  --green: #7cf0c9;        /* статус «годно» */
+  --green: #7cf0c9;
   --green-ink: #0b3d2e;
-  --amber: #ffc145;        /* статус «скоро истекает» */
-  --red: #ff7a7a;          /* статус «просрочено» */
+  --amber: #ffc145;
+  --red: #ff7a7a;
   --track: #e6e6e6;
 
   --border: 2px solid var(--ink);
@@ -25,7 +20,6 @@
   --gutter: 81px;
 }
 
-/* ---------- База ---------- */
 *,
 *::before,
 *::after { box-sizing: border-box; }
@@ -54,7 +48,6 @@ a { color: inherit; text-decoration: none; }
 
 :focus-visible { outline: 3px solid var(--pink); outline-offset: 2px; }
 
-/* ---------- Кнопки ---------- */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -74,7 +67,6 @@ a { color: inherit; text-decoration: none; }
 .btn--white { background: var(--bg); }
 .btn--red   { background: var(--red); }
 
-/* ---------- Верхнее меню ---------- */
 .topbar {
   position: sticky;
   top: 0;
@@ -115,7 +107,7 @@ a { color: inherit; text-decoration: none; }
   border-color: var(--ink);
   font-weight: 700;
 }
-.nav__item.is-active img { filter: brightness(0) saturate(100%); } /* иконка становится #111 */
+.nav__item.is-active img { filter: brightness(0) saturate(100%); }
 .nav__badge {
   position: absolute;
   top: -4px;
@@ -144,7 +136,6 @@ a { color: inherit; text-decoration: none; }
   font-size: 16px;
 }
 
-/* ---------- Контент ---------- */
 .content { padding: 40px var(--gutter) 56px; }
 .page { display: flex; flex-direction: column; gap: 28px; animation: fade .25s ease; }
 
@@ -176,7 +167,6 @@ a { color: inherit; text-decoration: none; }
 .search input::placeholder { color: var(--muted); }
 .search:focus-within { box-shadow: var(--shadow-hover); }
 
-/* ---------- Сводка ---------- */
 .summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
 .summary__card {
   display: flex;
@@ -199,7 +189,6 @@ a { color: inherit; text-decoration: none; }
 .summary__num   { font-family: var(--font-title); font-weight: 700; font-size: 38px; }
 .summary__label { font-weight: 600; }
 
-/* ---------- Категории ---------- */
 .chips { display: flex; flex-wrap: wrap; gap: 10px; }
 .chip {
   padding: 10px 20px;
@@ -214,10 +203,9 @@ a { color: inherit; text-decoration: none; }
 .chip:hover { transform: translateY(-2px); }
 .chip.is-active { background: var(--pink); }
 
-/* ---------- Сетка карточек ---------- */
 .grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);  /* как в макете: 3 карточки в ряд */
+  grid-template-columns: repeat(3, 1fr);
   gap: 24px;
 }
 
@@ -248,7 +236,6 @@ a { color: inherit; text-decoration: none; }
   border-radius: 12px;
 }
 
-/* Флакон, нарисованный CSS (как в Figma: крышка + корпус + этикетка) */
 .bottle {
   display: flex;
   flex-direction: column;
@@ -289,7 +276,6 @@ a { color: inherit; text-decoration: none; }
 .bar__fill { height: 100%; background: var(--ink); border-radius: 3px; transition: width .6s ease; }
 .bar__fill--ok { background: var(--green-ink); }
 
-/* Фото средства вместо нарисованного флакона */
 .card__img,
 .preview,
 .reminder__dot { overflow: hidden; }
@@ -301,9 +287,8 @@ a { color: inherit; text-decoration: none; }
 }
 .card:hover .photo { transform: scale(1.06); }
 
-/* Вырезка на прозрачном фоне: товар целиком, с «поп»-тенью */
 .photo--cutout {
-  height: 128px;           /* блок фото 150 px — оставляем воздух сверху и снизу */
+  height: 128px;
   width: auto;
   max-width: 90%;
   object-fit: contain;
@@ -317,7 +302,6 @@ a { color: inherit; text-decoration: none; }
 .photo-field__hint { font-size: 12px; }
 .btn--small { padding: 8px 14px; font-size: 14px; box-shadow: 3px 3px 0 0 var(--ink); }
 
-/* ---------- Пустое состояние ---------- */
 .empty {
   padding: 48px;
   text-align: center;
@@ -326,7 +310,6 @@ a { color: inherit; text-decoration: none; }
 }
 .empty__title { font-family: var(--font-title); font-size: 20px; margin-bottom: 6px; }
 
-/* ---------- Панели (Рутина, Профиль) ---------- */
 .panel {
   padding: 24px;
   border: var(--border);
@@ -355,7 +338,6 @@ a { color: inherit; text-decoration: none; }
 .check input:checked::after { content: "✓"; font-weight: 700; font-size: 14px; }
 .check input:checked + span { text-decoration: line-through; color: var(--muted); }
 
-/* ---------- Напоминания ---------- */
 .reminders { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 14px; }
 .reminder {
   display: flex;
@@ -386,7 +368,6 @@ a { color: inherit; text-decoration: none; }
 .field select:focus,
 .select-wrap select:focus { box-shadow: var(--shadow); }
 
-/* ---------- Профиль ---------- */
 .profile { max-width: 520px; display: flex; flex-direction: column; gap: 20px; align-items: flex-start; }
 .profile__avatar {
   width: 88px;
@@ -402,7 +383,6 @@ a { color: inherit; text-decoration: none; }
 .profile__stats { display: flex; flex-wrap: wrap; gap: 10px; }
 .profile .field { width: 100%; }
 
-/* ---------- Форма ---------- */
 .field { display: flex; flex-direction: column; gap: 6px; flex: 1; min-width: 0; border: 0; padding: 0; margin: 0; }
 .field > span,
 .field > legend { font-size: 13px; font-weight: 600; padding: 0; margin-bottom: 6px; }
@@ -420,7 +400,6 @@ a { color: inherit; text-decoration: none; }
 .swatch:hover { transform: scale(1.1); }
 .swatch.is-active { box-shadow: 0 0 0 3px var(--bg), 0 0 0 5px var(--ink); }
 
-/* ---------- Модальное окно ---------- */
 .modal {
   width: min(520px, calc(100% - 32px));
   padding: 0;
@@ -429,7 +408,7 @@ a { color: inherit; text-decoration: none; }
   box-shadow: 8px 8px 0 0 var(--ink);
 }
 .modal[open] { animation: pop .3s cubic-bezier(.2, 1.4, .4, 1); }
-.modal::backdrop { background: rgba(255, 233, 92, .75); }  /* жёлтый фон из рамки макета */
+.modal::backdrop { background: rgba(255, 233, 92, .75); }
 .modal__body { display: flex; flex-direction: column; gap: 16px; padding: 24px; }
 .modal__actions { display: flex; gap: 10px; margin-top: 4px; }
 .modal__actions .btn { padding: 12px 18px; }
@@ -444,7 +423,6 @@ a { color: inherit; text-decoration: none; }
   transition: background .2s ease;
 }
 
-/* ---------- Уведомление ---------- */
 .toast {
   position: fixed;
   left: 50%;
@@ -462,9 +440,6 @@ a { color: inherit; text-decoration: none; }
 }
 .toast.is-visible { opacity: 1; transform: translate(-50%, 0); }
 
-/* =========================================================
-   Адаптив
-   ========================================================= */
 @media (max-width: 1200px) {
   :root { --gutter: 40px; }
   .nav__item { padding: 10px 14px; gap: 8px; }
@@ -472,7 +447,7 @@ a { color: inherit; text-decoration: none; }
 
 @media (max-width: 960px) {
   .grid { grid-template-columns: repeat(2, 1fr); }
-  .nav__item span:not(.nav__badge) { display: none; }  /* в меню остаются только иконки */
+  .nav__item span:not(.nav__badge) { display: none; }
   .page-head { flex-wrap: wrap; }
   .page-head__title { flex-basis: 100%; }
   .search { flex: 1; width: auto; }

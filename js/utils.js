@@ -1,24 +1,18 @@
-/* =========================================================
-   utils.js — даты, склонения, хранилище
-   ========================================================= */
-
 const DAY_MS = 24 * 60 * 60 * 1000;
 const MONTHS_SHORT = ["янв.", "февр.", "мар.", "апр.", "мая", "июн.", "июл.", "авг.", "сент.", "окт.", "нояб.", "дек."];
 
-/* Сегодня без времени (полночь), чтобы разница считалась в целых днях */
 function today() {
   const d = new Date();
   d.setHours(0, 0, 0, 0);
   return d;
 }
 
-/* "2026-11-14" -> Date (в местном времени, без сдвига часового пояса) */
+// new Date("2026-11-14") парсится в UTC и может сдвинуть дату, поэтому собираем вручную
 function parseDate(str) {
   const [y, m, d] = str.split("-").map(Number);
   return new Date(y, m - 1, d);
 }
 
-/* Date -> "2026-11-14" (формат для <input type="date">) */
 function toISO(date) {
   const y = date.getFullYear();
   const m = String(date.getMonth() + 1).padStart(2, "0");
@@ -34,16 +28,14 @@ function addMonths(date, n) {
 
 function addDays(date, n) {
   const d = new Date(date);
-  d.setDate(d.getDate() + n); // setDate корректно учитывает переход на летнее/зимнее время
+  d.setDate(d.getDate() + n);
   return d;
 }
 
-/* "24 нояб. 2025" */
 function formatDate(date) {
   return `${date.getDate()} ${MONTHS_SHORT[date.getMonth()]} ${date.getFullYear()}`;
 }
 
-/* Склонение: plural(5, ["средство", "средства", "средств"]) -> "средств" */
 function plural(n, forms) {
   const n10 = n % 10;
   const n100 = n % 100;
@@ -52,10 +44,6 @@ function plural(n, forms) {
   return forms[2];
 }
 
-/*
-  Главная функция расчёта: по дате вскрытия и сроку
-  возвращает статус, сколько дней осталось и долю использованного срока.
-*/
 function getExpiry(item, soonDays) {
   const opened = parseDate(item.opened);
   const expires = addMonths(opened, item.months);
@@ -70,7 +58,6 @@ function getExpiry(item, soonDays) {
   return { opened, expires, daysLeft, status, used };
 }
 
-/* Текст для бейджа статуса */
 function statusText(daysLeft) {
   if (daysLeft < 0) {
     const d = Math.abs(daysLeft);
@@ -81,14 +68,12 @@ function statusText(daysLeft) {
   return `Осталось ${Math.floor(daysLeft / 30)} мес.`;
 }
 
-/* Безопасная вставка пользовательского текста в HTML */
 function escapeHTML(str) {
   return String(str).replace(/[&<>"']/g, (ch) => ({
     "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
   })[ch]);
 }
 
-/* localStorage с защитой от ошибок (например, в режиме инкогнито) */
 const storage = {
   get(key, fallback) {
     try {
@@ -103,7 +88,7 @@ const storage = {
       localStorage.setItem(key, JSON.stringify(value));
       return true;
     } catch {
-      return false; /* хранилище недоступно или переполнено */
+      return false;
     }
   },
 };
