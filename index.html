@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Косметичка — трекер сроков годности</title>
+  <meta name="description" content="Прототип веб-приложения для отслеживания сроков годности косметики.">
+  <link rel="icon" href="assets/icons/logo.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&family=Unbounded:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- ===== Верхнее меню ===== -->
+  <header class="topbar">
+    <a class="logo" href="#cosmetics">
+      <span class="logo__mark"><img src="assets/icons/logo.svg" alt="" width="20" height="20"></span>
+      <span class="logo__text">Косметичка</span>
+    </a>
+
+    <nav class="nav" aria-label="Основное меню">
+      <a class="nav__item" href="#cosmetics" data-route="cosmetics">
+        <img src="assets/icons/home.svg" alt="" width="20" height="20"><span>Косметичка</span>
+      </a>
+      <a class="nav__item" href="#routine" data-route="routine">
+        <img src="assets/icons/routine.svg" alt="" width="20" height="20"><span>Рутина</span>
+      </a>
+      <a class="nav__item" href="#reminders" data-route="reminders">
+        <img src="assets/icons/bell.svg" alt="" width="20" height="20"><span>Напоминания</span>
+        <span class="nav__badge" id="navBadge" hidden></span>
+      </a>
+      <a class="nav__item" href="#profile" data-route="profile">
+        <img src="assets/icons/user.svg" alt="" width="20" height="20"><span>Профиль</span>
+      </a>
+    </nav>
+
+    <a class="avatar" href="#profile" id="avatar" aria-label="Профиль">Ю</a>
+  </header>
+
+  <main class="content">
+    <!-- ===== Страница «Косметичка» ===== -->
+    <section class="page" id="page-cosmetics">
+      <div class="page-head">
+        <div class="page-head__title">
+          <h1>Моя косметичка</h1>
+          <p class="muted" id="subtitle"></p>
+        </div>
+        <label class="search">
+          <img src="assets/icons/search.svg" alt="" width="18" height="18">
+          <input type="search" id="search" placeholder="Найти средство" autocomplete="off">
+        </label>
+        <button class="btn btn--pink" id="addBtn" type="button">
+          <img src="assets/icons/plus.svg" alt="" width="18" height="18">
+          Добавить средство
+        </button>
+      </div>
+
+      <div class="summary">
+        <button class="summary__card summary__card--ok" data-status="ok" type="button">
+          <span class="summary__num" id="countOk">0</span><span class="summary__label">Годны</span>
+        </button>
+        <button class="summary__card summary__card--soon" data-status="soon" type="button">
+          <span class="summary__num" id="countSoon">0</span><span class="summary__label">Скоро истекают</span>
+        </button>
+        <button class="summary__card summary__card--expired" data-status="expired" type="button">
+          <span class="summary__num" id="countExpired">0</span><span class="summary__label">Просрочены</span>
+        </button>
+      </div>
+
+      <div class="chips" id="categories" role="tablist"></div>
+
+      <div class="grid" id="grid"></div>
+      <div class="empty" id="empty" hidden>
+        <p class="empty__title">Ничего не найдено</p>
+        <p class="muted">Попробуйте другой запрос или категорию.</p>
+      </div>
+    </section>
+
+    <!-- ===== Страница «Рутина» ===== -->
+    <section class="page" id="page-routine" hidden>
+      <div class="page-head">
+        <div class="page-head__title">
+          <h1>Рутина на сегодня</h1>
+          <p class="muted" id="routineDate"></p>
+        </div>
+      </div>
+      <div class="routine">
+        <div class="panel panel--sun">
+          <h2>☀️ Утро</h2>
+          <ul class="checklist" id="routineMorning"></ul>
+        </div>
+        <div class="panel panel--moon">
+          <h2>🌙 Вечер</h2>
+          <ul class="checklist" id="routineEvening"></ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Страница «Напоминания» ===== -->
+    <section class="page" id="page-reminders" hidden>
+      <div class="page-head">
+        <div class="page-head__title">
+          <h1>Напоминания</h1>
+          <p class="muted">Средства, которые пора использовать или выбросить</p>
+        </div>
+        <label class="select-wrap">
+          Предупреждать за
+          <select id="threshold">
+            <option value="14">14 дней</option>
+            <option value="30">30 дней</option>
+            <option value="60">60 дней</option>
+          </select>
+        </label>
+      </div>
+      <ul class="reminders" id="remindersList"></ul>
+      <div class="empty" id="remindersEmpty" hidden>
+        <p class="empty__title">Всё свежее 🎉</p>
+        <p class="muted">Нет средств с истекающим сроком.</p>
+      </div>
+    </section>
+
+    <!-- ===== Страница «Профиль» ===== -->
+    <section class="page" id="page-profile" hidden>
+      <div class="page-head">
+        <div class="page-head__title">
+          <h1>Профиль</h1>
+          <p class="muted">Данные хранятся только в вашем браузере</p>
+        </div>
+      </div>
+      <div class="profile panel">
+        <div class="profile__avatar" id="profileAvatar">Ю</div>
+        <label class="field">
+          <span>Имя</span>
+          <input type="text" id="profileName" maxlength="30">
+        </label>
+        <div class="profile__stats" id="profileStats"></div>
+        <button class="btn btn--white" id="resetBtn" type="button">Сбросить демо-данные</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===== Модальное окно: добавить / изменить ===== -->
+  <dialog class="modal" id="modal">
+    <form class="modal__body" id="form" method="dialog">
+      <h2 id="modalTitle">Новое средство</h2>
+
+      <div class="preview" id="preview">
+        <div class="bottle"><span class="bottle__cap"></span><span class="bottle__body"><span class="bottle__label"></span></span></div>
+      </div>
+
+      <div class="photo-field">
+        <label class="btn btn--white btn--small" for="photoInput">
+          <img src="assets/icons/plus.svg" alt="" width="16" height="16">
+          <span id="photoBtnText">Добавить фото</span>
+        </label>
+        <input type="file" id="photoInput" accept="image/*" hidden>
+        <button class="btn btn--white btn--small" type="button" id="photoRemove" hidden>Убрать фото</button>
+        <span class="muted photo-field__hint">Необязательно · JPG, PNG, WEBP</span>
+      </div>
+
+      <label class="field">
+        <span>Название</span>
+        <input type="text" name="name" required maxlength="40" placeholder="Например, тоник с кислотами">
+      </label>
+      <div class="field-row">
+        <label class="field">
+          <span>Бренд</span>
+          <input type="text" name="brand" maxlength="25" placeholder="Бренд">
+        </label>
+        <label class="field">
+          <span>Категория</span>
+          <select name="category" id="categorySelect"></select>
+        </label>
+      </div>
+      <div class="field-row">
+        <label class="field">
+          <span>Дата вскрытия</span>
+          <input type="date" name="opened" required>
+        </label>
+        <label class="field">
+          <span>Срок после вскрытия</span>
+          <select name="months">
+            <option value="3">3 мес.</option>
+            <option value="6">6 мес.</option>
+            <option value="12" selected>12 мес.</option>
+            <option value="18">18 мес.</option>
+            <option value="24">24 мес.</option>
+            <option value="36">36 мес.</option>
+          </select>
+        </label>
+      </div>
+      <fieldset class="field">
+        <legend>Цвет</legend>
+        <div class="swatches" id="swatches"></div>
+      </fieldset>
+
+      <div class="modal__actions">
+        <button class="btn btn--red" type="button" id="deleteBtn" hidden>Удалить</button>
+        <span class="spacer"></span>
+        <button class="btn btn--white" type="button" id="cancelBtn">Отмена</button>
+        <button class="btn btn--pink" type="submit">Сохранить</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="js/data.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
