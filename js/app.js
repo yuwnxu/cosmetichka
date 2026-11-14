@@ -5,7 +5,7 @@
 /* ---------- Состояние ---------- */
 const state = {
   items: storage.get("items_v2", null) || createDemoItems(),
-  settings: storage.get("settings", { threshold: 30, name: "Юлдуз" }),
+  settings: storage.get("settings_v2", { threshold: 30, name: "User" }),
   routine: storage.get("routine", { date: "", done: [] }),
   filter: { category: "Все", status: null, query: "" },
   editingId: null,     // id средства в модальном окне (null — новое)
@@ -32,7 +32,7 @@ function createDemoItems() {
 /* Возвращает false, если браузер не смог сохранить (например, кончилось место) */
 function save() {
   const ok = storage.set("items_v2", state.items);
-  storage.set("settings", state.settings);
+  storage.set("settings_v2", state.settings);
   storage.set("routine", state.routine);
   return ok;
 }
